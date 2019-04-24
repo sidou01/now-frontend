@@ -1,4 +1,5 @@
 import React from 'react'
+// import Logo from './components/Logo'
 import './App.css'
 
 const App = () => {
@@ -11,7 +12,10 @@ function SignInPage() {
       <div id="left">
         <div id="signin">
           <div className="logo">
-            <img src="https://image.ibb.co/hW1YHq/login-logo.png" alt="now" />
+            <img
+              src="https://image.ibb.co/hW1YHq/login-logo.png"
+              alt="Sluralpright"
+            />
           </div>
           <form>
             <div>
@@ -28,7 +32,6 @@ function SignInPage() {
           </form>
           <div className="links">
             <a href="#">Forgot Password</a>
-            <a href="#">Sign Up</a>
           </div>
           <div className="or">
             <hr className="bar" />
@@ -50,7 +53,7 @@ function SignInPage() {
         <div id="showcase">
           <div id="showcase-content">
             <h1 id="showcase-text">
-              Let's create the future <strong>together</strong>
+              Manage your appointments all in <strong>one</strong> place
             </h1>
             <a href="#" className="secondary-btn">
               Start a FREE 10-day trial
