@@ -152,8 +152,8 @@ body {
   border: 1px;
   border-radius: 2px;
   font-weight: 500;
-  // background: #f96816;
-  background: #0081cf;
+  background: #2962ff;
+
   color: #fff;
   text-decoration: none;
   cursor: pointer;
@@ -162,8 +162,7 @@ body {
 }
 
 .primary-btn:hover {
-  // background: #ff7b39;
-  background: #225470;
+  background: #0d47a1;
 }
 
 .secondary-btn {
@@ -182,10 +181,8 @@ body {
 }
 
 .secondary-btn:hover {
-  // border-color: #ff7b39;
-  // color: #ff7b39;
-  color: #0081cf;
-  border-color: #0081cf;
+  border-color: #2962ff;
+  color: #2962ff;
 }
 
 #showcase {
@@ -221,6 +218,10 @@ body {
 #showcase .secondary-btn:hover {
   color: #aaa;
   border-color: #aaa;
+}
+
+.logoText {
+  color: #fff;
 }
 // /* Logo */
 // .header__logo {
