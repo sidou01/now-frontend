@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import gql from 'graphql-tag'
-import { useMutation } from 'react-apollo-hooks'
+import { useMutation, useApolloClient } from 'react-apollo-hooks'
 import styled from 'styled-components'
 
 import Logo from '../../components/Logo'
@@ -53,9 +53,17 @@ export const LoginForm = () => {
     },
   })
 
+  const client = useApolloClient()
+
   const handleLogin = async () => {
     const data = await login(email, password)
+    console.log(data.data.login)
     localStorage.setItem('authToken', data.data.login.token)
+    client.writeData({
+      data: {
+        isLoggedIn: true,
+      },
+    })
   }
   return (
     <form>

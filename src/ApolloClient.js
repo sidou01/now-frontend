@@ -3,12 +3,16 @@ import { ApolloClient } from 'apollo-client'
 import { ApolloLink } from 'apollo-link'
 import { HttpLink } from 'apollo-link-http'
 import { onError } from 'apollo-link-error'
+import { typeDefs } from './localStateSchema'
 
 const createClient = () => {
   const cache = new InMemoryCache()
 
   const httpLink = new HttpLink({
     uri: 'http://localhost:4000/graphql',
+    headers: {
+      authorization: localStorage.getItem('authToken'),
+    },
   })
 
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -28,11 +32,12 @@ const createClient = () => {
   const client = new ApolloClient({
     cache,
     link: ApolloLink.from([errorLink, httpLink]),
+    typeDefs,
   })
 
   client.writeData({
     data: {
-      isAuthenticated: false,
+      isLoggedIn: false,
     },
   })
   return client
