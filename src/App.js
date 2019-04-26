@@ -1,10 +1,9 @@
 import React from 'react'
 // import Logo from './components/Logo'
 import './App.css'
-import LoginPage from './pages/loginPage/'
 
 const App = () => {
-  return <LoginPage />
+  return <div>App component</div>
 }
 
 export default App
