@@ -171,24 +171,6 @@ export const LoginForm = props => {
 const WrappedLoginForm = Form.create({ name: 'normal_login' })(LoginForm)
 
 export const Links = () => {
-  const [visible, toggleVisible] = useState(false)
-  const [width, setWidth] = useState(window.innerWidth)
-
-  const showDrawer = () => {
-    toggleVisible(true)
-  }
-
-  const onClose = () => {
-    toggleVisible(false)
-  }
-
-  const handleResize = () => setWidth(window.innerWidth)
-
-  useEffect(() => {
-    window.addEventListener('resize', () => handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  })
   return (
     <>
       <div style={{ width: '80%' }}>
@@ -226,12 +208,7 @@ export const Links = () => {
           }}
         />
       </div>
-      <SignUpDrawer
-        visible={visible}
-        width={width}
-        onClose={onClose}
-        showDrawer={showDrawer}
-      />
+      <SignUpDrawer />
     </>
   )
 }
@@ -253,15 +230,28 @@ export const Footer = () => (
 
 const { Option } = Select
 
-const DrawerForm = ({
-  visible,
-  width,
-  onClose,
-  showDrawer,
-  form: { getFieldDecorator },
-}) => {
+const DrawerForm = ({ form: { getFieldDecorator } }) => {
+  const [visible, toggleVisible] = useState(false)
+  const [width, setWidth] = useState(window.innerWidth)
+
+  const showDrawer = () => {
+    toggleVisible(true)
+  }
+
+  const onClose = () => {
+    toggleVisible(false)
+  }
+
+  const handleResize = () => setWidth(window.innerWidth)
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  })
   return (
     <div>
+      {width}
       <LocalButton onClick={showDrawer} secondary width="80%">
         Create an account
       </LocalButton>
