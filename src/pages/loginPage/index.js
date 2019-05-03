@@ -1,16 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import gql from 'graphql-tag'
 import { useMutation, useApolloClient } from 'react-apollo-hooks'
 import styled from 'styled-components'
+import { Input, Button, Tooltip, Icon, Form } from 'antd'
+import { Drawer, Col, Row, Select, DatePicker } from 'antd'
 
-import Logo from '../../components/Logo'
+// import Logo from '../../components/Logo'
 
 export default () => (
   <Wrapper>
     <LeftWrapper>
       <div id="signin">
-        <Logo height="175" width="400" />
-        <LoginForm />
+        <WrappedLoginForm />
         <Links />
       </div>
       <Footer />
@@ -34,7 +35,10 @@ const LOGIN = gql`
   mutation LOGIN($email: String!, $password: String!) {
     login(input: { email: $email, password: $password }) {
       success
-      error
+      error {
+        msg
+        field
+      }
       token
       user {
         id
@@ -43,9 +47,27 @@ const LOGIN = gql`
     }
   }
 `
-export const LoginForm = () => {
+
+const formItemLayout = {
+  labelCol: {
+    xs: { span: 24 },
+    sm: { span: 5 },
+  },
+  wrapperCol: {
+    xs: { span: 24 },
+    sm: { span: 12 },
+  },
+}
+
+export const LoginForm = props => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [loading, toggleLoading] = useState(false)
+
+  const { getFieldDecorator } = props.form
+
   const login = useMutation(LOGIN, {
     variables: {
       email,
@@ -55,83 +77,164 @@ export const LoginForm = () => {
 
   const client = useApolloClient()
 
-  const handleLogin = async () => {
-    const data = await login(email, password)
-    console.log(data.data.login)
-    localStorage.setItem('authToken', data.data.login.token)
-    client.writeData({
-      data: {
-        isLoggedIn: true,
-      },
-    })
+  const handleLogin = () => {
+    toggleLoading(true)
+    login(email, password)
+      .then(({ data: { login } }) => {
+        localStorage.setItem('authToken', login.token)
+        if (login.success) {
+          client.writeData({
+            data: {
+              isLoggedIn: true,
+              authenticatedUser: login.user,
+            },
+          })
+        } else {
+          login.error.field === 'EMAIL'
+            ? setEmailError(login.error.msg)
+            : setPasswordError(login.error.msg)
+        }
+        toggleLoading(false)
+      })
+      .catch(error => {
+        console.log(error)
+      })
   }
   return (
-    <form>
-      <div>
-        <Label>Email</Label>
-        <TextField
-          type="text"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <Label>Password</Label>
-        <TextField
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
-      </div>
-      <Button type="submit" onClick={handleLogin}>
-        Sign In
-      </Button>
-    </form>
+    <div>
+      <Form className="login-form" style={{ width: '80%' }}>
+        <label
+          style={{
+            fontSize: '0.9rem',
+            lineHeight: '2rem',
+            fontWeight: '500',
+            color: '#fff',
+          }}>
+          Email
+        </label>
+        <Form.Item>
+          {getFieldDecorator('email', {
+            rules: [{ required: true, message: 'Please input your username!' }],
+          })(
+            <Input
+              size="large"
+              placeholder="Please enter your email here."
+              prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              type="email"
+              onChange={e => setEmail(e.target.value)}
+              suffix={
+                <Tooltip title="Please enter a verified email">
+                  <Icon
+                    type="info-circle"
+                    style={{ color: 'rgba(0,0,0,.45)' }}
+                  />
+                </Tooltip>
+              }
+            />,
+          )}
+        </Form.Item>
+        <label
+          style={{
+            fontSize: '0.9rem',
+            lineHeight: '2rem',
+            fontWeight: '500',
+            color: '#fff',
+          }}>
+          Password
+        </label>
+        <Form.Item>
+          {getFieldDecorator('password', {
+            rules: [{ required: true, message: 'Please input your Password!' }],
+          })(
+            <Input.Password
+              prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+              placeholder="Please enter your password here."
+              size="large"
+              type="password"
+              onChange={e => setPassword(e.target.value)}
+            />,
+          )}
+        </Form.Item>
+        <Button
+          type="primary"
+          onClick={handleLogin}
+          size="large"
+          style={{ width: '100%' }}
+          loading={loading}>
+          Sign In
+        </Button>
+      </Form>
+    </div>
   )
 }
 
-export const Links = () => (
-  <>
-    <div style={{ width: '80%' }}>
-      <ForgotPassword href="#">Forgot Password</ForgotPassword>
-    </div>
-    <div
-      style={{
-        width: '80%',
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: '1.2rem',
-      }}>
-      <hr
+const WrappedLoginForm = Form.create({ name: 'normal_login' })(LoginForm)
+
+export const Links = () => {
+  const [visible, toggleVisible] = useState(false)
+  const [width, setWidth] = useState(window.innerWidth)
+
+  const showDrawer = () => {
+    toggleVisible(true)
+  }
+
+  const onClose = () => {
+    toggleVisible(false)
+  }
+
+  const handleResize = () => setWidth(window.innerWidth)
+
+  useEffect(() => {
+    window.addEventListener('resize', () => handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  })
+  return (
+    <>
+      <div style={{ width: '80%' }}>
+        <ForgotPassword href="#">Forgot Password</ForgotPassword>
+      </div>
+      <div
         style={{
           width: '80%',
-          flex: 'auto',
-          border: 'none',
-          height: '1px',
-          background: '#aaa',
-        }}
-      />
-      <span style={{ color: '#ccc', padding: '0 0.8rem' }}>OR</span>
-      <hr
-        style={{
-          width: '80%',
-          flex: 'auto',
-          border: 'none',
-          height: '1px',
-          background: '#aaa',
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'center',
           marginBottom: '1.2rem',
-        }}
+        }}>
+        <hr
+          style={{
+            width: '80%',
+            flex: 'auto',
+            border: 'none',
+            height: '1px',
+            background: '#aaa',
+          }}
+        />
+        <span style={{ color: '#ccc', padding: '0 0.8rem' }}>OR</span>
+        <hr
+          style={{
+            width: '80%',
+            flex: 'auto',
+            border: 'none',
+            height: '1px',
+            background: '#aaa',
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: '1.2rem',
+          }}
+        />
+      </div>
+      <SignUpDrawer
+        visible={visible}
+        width={width}
+        onClose={onClose}
+        showDrawer={showDrawer}
       />
-    </div>
-    <Button href="#" secondary width="80%">
-      Create an account
-    </Button>
-  </>
-)
+    </>
+  )
+}
 
 export const Footer = () => (
   <footer id="main-footer">
@@ -147,6 +250,156 @@ export const Footer = () => (
 //     <img src="https://image.ibb.co/hW1YHq/login-logo.png" alt="Sluralpright" />
 //   </div>
 // )
+
+const { Option } = Select
+
+const DrawerForm = ({
+  visible,
+  width,
+  onClose,
+  showDrawer,
+  form: { getFieldDecorator },
+}) => {
+  return (
+    <div>
+      <LocalButton onClick={showDrawer} secondary width="80%">
+        Create an account
+      </LocalButton>
+      <Drawer
+        title="Sign Up"
+        width={(width * 60) / 100}
+        onClose={onClose}
+        visible={visible}>
+        <Form layout="vertical" hideRequiredMark>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Name">
+                {getFieldDecorator('name', {
+                  rules: [
+                    { required: true, message: 'Please enter user name' },
+                  ],
+                })(<Input placeholder="Please enter user name" />)}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Url">
+                {getFieldDecorator('url', {
+                  rules: [{ required: true, message: 'Please enter url' }],
+                })(
+                  <Input
+                    style={{ width: '100%' }}
+                    addonBefore="http://"
+                    addonAfter=".com"
+                    placeholder="Please enter url"
+                  />,
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Owner">
+                {getFieldDecorator('owner', {
+                  rules: [
+                    { required: true, message: 'Please select an owner' },
+                  ],
+                })(
+                  <Select placeholder="Please select an owner">
+                    <Option value="xiao">Xiaoxiao Fu</Option>
+                    <Option value="mao">Maomao Zhou</Option>
+                  </Select>,
+                )}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="Type">
+                {getFieldDecorator('type', {
+                  rules: [
+                    { required: true, message: 'Please choose the type' },
+                  ],
+                })(
+                  <Select placeholder="Please choose the type">
+                    <Option value="private">Private</Option>
+                    <Option value="public">Public</Option>
+                  </Select>,
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item label="Approver">
+                {getFieldDecorator('approver', {
+                  rules: [
+                    { required: true, message: 'Please choose the approver' },
+                  ],
+                })(
+                  <Select placeholder="Please choose the approver">
+                    <Option value="jack">Jack Ma</Option>
+                    <Option value="tom">Tom Liu</Option>
+                  </Select>,
+                )}
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="DateTime">
+                {getFieldDecorator('dateTime', {
+                  rules: [
+                    { required: true, message: 'Please choose the dateTime' },
+                  ],
+                })(
+                  <DatePicker.RangePicker
+                    style={{ width: '100%' }}
+                    getPopupContainer={trigger => trigger.parentNode}
+                  />,
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item label="Description">
+                {getFieldDecorator('description', {
+                  rules: [
+                    {
+                      required: true,
+                      message: 'please enter url description',
+                    },
+                  ],
+                })(
+                  <Input.TextArea
+                    rows={4}
+                    placeholder="please enter url description"
+                  />,
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+        </Form>
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            bottom: 0,
+            width: '100%',
+            borderTop: '1px solid #e9e9e9',
+            padding: '10px 16px',
+            background: '#fff',
+            textAlign: 'right',
+          }}>
+          <Button onClick={onClose} style={{ marginRight: 8 }}>
+            Cancel
+          </Button>
+          <Button onClick={onClose} type="primary">
+            Submit
+          </Button>
+        </div>
+      </Drawer>
+    </div>
+  )
+}
+
+const SignUpDrawer = Form.create()(DrawerForm)
 
 const LeftWrapper = styled.div`
   display: flex;
@@ -202,21 +455,6 @@ const ForgotPassword = styled.a`
   width: 100%;
   transition: all 0.5s;
 `
-const TextField = styled.input`
-  margin-bottom: 1.3rem;
-  width: 100%;
-  border-radius: 2px;
-  background: #181818;
-  color: #ccc;
-  padding: 0.5rem 1rem;
-  line-height: 1.3rem;
-`
-
-const Label = styled.label`
-  font-size: 0.9rem;
-  line-height: 2rem;
-  font-weight: 500;
-`
 const Wrapper = styled.div`
   color: #fff;
   background: #181818;
@@ -224,7 +462,7 @@ const Wrapper = styled.div`
   flex-direction: row;
 `
 
-const Button = styled.a`
+const LocalButton = styled.a`
   padding: 0.7rem 1rem;
   height: 2.7rem;
   display: block;
