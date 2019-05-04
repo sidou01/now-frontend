@@ -8,6 +8,7 @@ const { Option } = Select
 const DrawerForm = ({ form: { getFieldDecorator } }) => {
   const [visible, toggleVisible] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
+  const [activeStep, setActiveStep] = useState(1)
 
   const showDrawer = () => {
     toggleVisible(true)
@@ -17,24 +18,19 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
     toggleVisible(false)
   }
 
-  const handleResize = () => setWidth(window.innerWidth)
+  const nextStep = () => {
+    setActiveStep(activeStep + 1)
+    if (activeStep === 3) {
+      //send register mutation
+      console.log('sent')
+    }
+  }
+  const lastStep = () => setActiveStep(activeStep - 1)
 
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  })
-  return (
-    <div>
-      <LocalButton onClick={showDrawer} secondary width="80%">
-        Create an account
-      </LocalButton>
-      <Drawer
-        title="Sign Up"
-        width={(width * 60) / 100}
-        onClose={onClose}
-        visible={visible}>
-        <Form layout="vertical" hideRequiredMark>
+  const getContentForActiveStep = step => {
+    switch (step) {
+      case 1:
+        return (
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Name">
@@ -60,6 +56,9 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
               </Form.Item>
             </Col>
           </Row>
+        )
+      case 2:
+        return (
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Owner">
@@ -90,55 +89,83 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
               </Form.Item>
             </Col>
           </Row>
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Approver">
-                {getFieldDecorator('approver', {
-                  rules: [
-                    { required: true, message: 'Please choose the approver' },
-                  ],
-                })(
-                  <Select placeholder="Please choose the approver">
-                    <Option value="jack">Jack Ma</Option>
-                    <Option value="tom">Tom Liu</Option>
-                  </Select>,
-                )}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="DateTime">
-                {getFieldDecorator('dateTime', {
-                  rules: [
-                    { required: true, message: 'Please choose the dateTime' },
-                  ],
-                })(
-                  <DatePicker.RangePicker
-                    style={{ width: '100%' }}
-                    getPopupContainer={trigger => trigger.parentNode}
-                  />,
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item label="Description">
-                {getFieldDecorator('description', {
-                  rules: [
-                    {
-                      required: true,
-                      message: 'please enter url description',
-                    },
-                  ],
-                })(
-                  <Input.TextArea
-                    rows={4}
-                    placeholder="please enter url description"
-                  />,
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
+        )
+      case 3:
+        return (
+          <>
+            <Row gutter={16}>
+              <Col span={12}>
+                <Form.Item label="Approver">
+                  {getFieldDecorator('approver', {
+                    rules: [
+                      { required: true, message: 'Please choose the approver' },
+                    ],
+                  })(
+                    <Select placeholder="Please choose the approver">
+                      <Option value="jack">Jack Ma</Option>
+                      <Option value="tom">Tom Liu</Option>
+                    </Select>,
+                  )}
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="DateTime">
+                  {getFieldDecorator('dateTime', {
+                    rules: [
+                      { required: true, message: 'Please choose the dateTime' },
+                    ],
+                  })(
+                    <DatePicker.RangePicker
+                      style={{ width: '100%' }}
+                      getPopupContainer={trigger => trigger.parentNode}
+                    />,
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item label="Description">
+                  {getFieldDecorator('description', {
+                    rules: [
+                      {
+                        required: true,
+                        message: 'please enter url description',
+                      },
+                    ],
+                  })(
+                    <Input.TextArea
+                      rows={4}
+                      placeholder="please enter url description"
+                    />,
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
+          </>
+        )
+    }
+  }
+
+  const handleResize = () => setWidth(window.innerWidth)
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+
+    return () => window.removeEventListener('resize', handleResize)
+  })
+  return (
+    <div>
+      <LocalButton onClick={showDrawer} secondary width="80%">
+        Create an account
+      </LocalButton>
+      <Drawer
+        title="Sign Up"
+        width={(width * 60) / 100}
+        onClose={onClose}
+        visible={visible}>
+        <Form layout="vertical" hideRequiredMark>
+          {getContentForActiveStep(activeStep)}
         </Form>
         <div
           style={{
@@ -151,11 +178,13 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
             background: '#fff',
             textAlign: 'right',
           }}>
-          <Button onClick={onClose} style={{ marginRight: 8 }}>
-            Cancel
+          <Button
+            onClick={activeStep === 1 ? onClose : lastStep}
+            style={{ marginRight: 8 }}>
+            {activeStep === 1 ? 'Cancel' : 'Back'}
           </Button>
-          <Button onClick={onClose} type="primary">
-            Submit
+          <Button onClick={nextStep} type="primary">
+            {activeStep !== 3 ? 'Next' : 'Submit'}
           </Button>
         </div>
       </Drawer>
