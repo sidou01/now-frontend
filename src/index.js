@@ -1,13 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import './index.scss'
-import App from './App'
-import { ApolloProvider } from 'react-apollo'
-import { ApolloProvider as ApolloHooksProvider } from 'react-apollo-hooks'
-import { Query } from 'react-apollo'
-import createClient from './ApolloClient'
-import LoginPage from './pages/loginPage'
-import gql from 'graphql-tag'
+import React from "react"
+import ReactDOM from "react-dom"
+import "./index.scss"
+import App from "./App"
+import { ApolloProvider } from "react-apollo"
+import { ApolloProvider as ApolloHooksProvider } from "react-apollo-hooks"
+import { Query } from "react-apollo"
+import createClient from "./ApolloClient"
+import LoginPage from "./pages/auth"
+import gql from "graphql-tag"
 
 //add reach/router routes
 
@@ -29,5 +29,5 @@ ReactDOM.render(
     </ApolloHooksProvider>
     ,
   </ApolloProvider>,
-  document.getElementById('root'),
+  document.getElementById("root")
 )
