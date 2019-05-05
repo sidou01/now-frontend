@@ -12,6 +12,8 @@ import {
 } from 'antd'
 import styled from 'styled-components'
 import { Steps } from 'antd'
+import { useSubscription } from 'react-apollo-hooks'
+import gql from 'graphql-tag'
 
 const useSteps = initialValue => {
   const [activeStep, setActiveStep] = useState(initialValue)
@@ -27,6 +29,31 @@ const useSteps = initialValue => {
 
 const { Option } = Select
 const Step = Steps.Step
+
+const CONFIRMATION_ENABLED = gql`
+  subscription confirmationEnabled($userId: ID!) {
+    confirmationEnabled(userId: $userId) {
+      id
+      email
+      confirmation
+    }
+  }
+`
+const ConfirmationSection = () => {
+  const { data, error, loading } = useSubscription(CONFIRMATION_ENABLED, {
+    variables: { userId: 'cjvar3q4q001v09371g20p3z2' },
+  })
+
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
+  if (error) {
+    return <div>Error! {error.message}</div>
+  }
+
+  return <div>{data.confirmationEnabled.email} has confimed his email</div>
+}
 
 const DrawerForm = ({ form: { getFieldDecorator } }) => {
   const [visible, toggleVisible] = useState(false)
@@ -72,38 +99,7 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
           </Row>
         )
       case 2:
-        return (
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Owner">
-                {getFieldDecorator('owner', {
-                  rules: [
-                    { required: true, message: 'Please select an owner' },
-                  ],
-                })(
-                  <Select placeholder="Please select an owner">
-                    <Option value="xiao">Xiaoxiao Fu</Option>
-                    <Option value="mao">Maomao Zhou</Option>
-                  </Select>,
-                )}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Type">
-                {getFieldDecorator('type', {
-                  rules: [
-                    { required: true, message: 'Please choose the type' },
-                  ],
-                })(
-                  <Select placeholder="Please choose the type">
-                    <Option value="private">Private</Option>
-                    <Option value="public">Public</Option>
-                  </Select>,
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-        )
+        return <ConfirmationSection />
       case 3:
         return (
           <>
@@ -237,4 +233,5 @@ const LocalButton = styled.a`
     background: ${props => (props.secondary ? '' : '#0d47a1')};
     border-color: ${props => (props.secondary ? '#2962ff' : '')};
     color: ${props => (props.secondary ? '#2962ff' : '')};
+
 `
