@@ -1,14 +1,37 @@
 import React, { useState, useEffect } from 'react'
-import { Input, Button, Form } from 'antd'
-import { Drawer, Col, Row, Select, DatePicker } from 'antd'
+import {
+  Drawer,
+  Col,
+  Row,
+  Select,
+  DatePicker,
+  Input,
+  Button,
+  Form,
+  Icon,
+} from 'antd'
 import styled from 'styled-components'
+import { Steps } from 'antd'
+
+const useSteps = initialValue => {
+  const [activeStep, setActiveStep] = useState(initialValue)
+
+  const nextStep = () => {
+    setActiveStep(activeStep + 1)
+  }
+  const lastStep = () => {
+    setActiveStep(activeStep - 1)
+  }
+  return [activeStep, nextStep, lastStep]
+}
 
 const { Option } = Select
+const Step = Steps.Step
 
 const DrawerForm = ({ form: { getFieldDecorator } }) => {
   const [visible, toggleVisible] = useState(false)
   const [width, setWidth] = useState(window.innerWidth)
-  const [activeStep, setActiveStep] = useState(1)
+  const [activeStep, nextStep, lastStep] = useSteps(0)
 
   const showDrawer = () => {
     toggleVisible(true)
@@ -17,15 +40,6 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
   const onClose = () => {
     toggleVisible(false)
   }
-
-  const nextStep = () => {
-    setActiveStep(activeStep + 1)
-    if (activeStep === 3) {
-      //send register mutation
-      console.log('sent')
-    }
-  }
-  const lastStep = () => setActiveStep(activeStep - 1)
 
   const getContentForActiveStep = step => {
     switch (step) {
@@ -164,6 +178,16 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
         width={(width * 60) / 100}
         onClose={onClose}
         visible={visible}>
+        <Steps current={activeStep}>
+          <Step title="Step 1" description="This is a description." />
+          <Step title="Step 2" description="This is a description." />
+          <Step
+            title="Step 3"
+            description="Email verification"
+            icon={<Icon type={activeStep === 2 ? 'loading' : 'solution'} />}
+          />
+          <Step title="Done" description="This is a description." />
+        </Steps>
         <Form layout="vertical" hideRequiredMark>
           {getContentForActiveStep(activeStep)}
         </Form>
