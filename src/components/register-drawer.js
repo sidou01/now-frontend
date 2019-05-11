@@ -1,19 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import {
-  Drawer,
-  Col,
-  Row,
-  Select,
-  DatePicker,
-  Input,
-  Button,
-  Form,
-  Icon,
-} from 'antd'
-import styled from 'styled-components'
-import { Steps } from 'antd'
-import { useSubscription } from 'react-apollo-hooks'
-import gql from 'graphql-tag'
+import React, { useState, useEffect } from "react"
+import { Drawer, Col, Row, Select, Input, Button, Form, Icon, notification } from "antd"
+import styled from "styled-components"
+import { Steps } from "antd"
+import { useSubscription } from "react-apollo-hooks"
+import gql from "graphql-tag"
+import { Formik } from "formik"
 
 const useSteps = initialValue => {
   const [activeStep, setActiveStep] = useState(initialValue)
@@ -41,7 +32,7 @@ const CONFIRMATION_ENABLED = gql`
 `
 const ConfirmationSection = () => {
   const { data, error, loading } = useSubscription(CONFIRMATION_ENABLED, {
-    variables: { userId: 'cjvar3q4q001v09371g20p3z2' },
+    variables: { userId: "cjvar3q4q001v09371g20p3z2" }
   })
 
   if (loading) {
@@ -60,6 +51,23 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
   const [width, setWidth] = useState(window.innerWidth)
   const [activeStep, nextStep, lastStep] = useSteps(0)
 
+  const openNotificationWithIcon = (type, msg) => {
+    notification[type]({
+      message: "Notification Title",
+      description: `${msg}`
+    })
+  }
+
+  const registerMutation = ({ age }) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if ((age = 88)) {
+          reject(new Error("error from server"))
+        }
+        resolve(true)
+      }, 1000)
+    })
+  }
   const showDrawer = () => {
     toggleVisible(true)
   }
@@ -70,117 +78,172 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
 
   const getContentForActiveStep = step => {
     switch (step) {
+      case 0:
+        return (
+          <Formik
+            initialValues={{
+              fullName: "",
+              email: "",
+              password: "",
+              password2: "",
+              gender: "",
+              age: 0,
+              phone: ""
+            }}
+            onSubmit={({ age }, actions) => {
+              registerMutation({ age })
+                .then(() => openNotificationWithIcon("success", "register worked!"))
+                .catch(err => actions.setFieldError("age", err.message))
+                .finally(() => actions.setSubmitting(false))
+            }}
+            render={props => (
+              <Form>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Full Name">
+                      {getFieldDecorator("fullName", {
+                        rules: [{ required: true, message: "Please input your full name!" }]
+                      })(
+                        <Input
+                          prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
+                          placeholder="Enter your full name"
+                          name="fullName"
+                          onChange={props.handleChange("fullName")}
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Email">
+                      {getFieldDecorator("email", {
+                        rules: [{ required: true, message: "Please input your username!" }]
+                      })(
+                        <Input
+                          prefix={<Icon type="user" style={{ color: "rgba(0,0,0,.25)" }} />}
+                          placeholder="Email"
+                          name="email"
+                          onChange={props.handleChange("email")}
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Password">
+                      {getFieldDecorator("password", {
+                        rules: [{ required: true, message: "Please input your Password!" }]
+                      })(
+                        <Input
+                          prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
+                          type="password"
+                          name="password"
+                          onChange={props.handleChange("password")}
+                          placeholder="Password"
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Confirm password">
+                      {getFieldDecorator("password2", {
+                        rules: [{ required: true, message: "Please input your Password!" }]
+                      })(
+                        <Input
+                          prefix={<Icon type="lock" style={{ color: "rgba(0,0,0,.25)" }} />}
+                          type="password"
+                          name="password2"
+                          placeholder="Enter your password again"
+                          onChange={props.handleChange("password2")}
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Age"
+                      help={props.errors.age}
+                      validateStatus={props.errors.age ? "error" : ""}
+                    >
+                      {getFieldDecorator("age", {
+                        rules: [{ required: true, message: "Please input your age!" }]
+                      })(
+                        <Input
+                          name="age"
+                          type="number"
+                          placeholder="Enter your age"
+                          onChange={props.handleChange("age")}
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item label="Phone number" hasFeedback>
+                      {getFieldDecorator("phone", {
+                        rules: [{ required: false, message: "Please input your phone number!" }]
+                      })(
+                        <Input
+                          type="number"
+                          placeholder="Enter your number"
+                          name="phone"
+                          onChange={props.handleChange("phone")}
+                        />
+                      )}
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item label="Select" hasFeedback>
+                      {getFieldDecorator("gender", {
+                        rules: [{ required: true, message: "Please select your gender!" }]
+                      })(
+                        <Select
+                          placeholder="Please select a country"
+                          onChange={props.handleChange("gender")}
+                          name="gender"
+                        >
+                          <Option value="male">male</Option>
+                          <Option value="female">female</Option>
+                        </Select>
+                      )}
+                    </Form.Item>
+                  </Col>
+                </Row>
+                <Button type="primary" loading={props.isSubmitting} onClick={props.handleSubmit}>
+                  Register
+                </Button>
+                {console.log(props)}
+              </Form>
+            )}
+          />
+        )
       case 1:
-        return (
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label="Name">
-                {getFieldDecorator('name', {
-                  rules: [
-                    { required: true, message: 'Please enter user name' },
-                  ],
-                })(<Input placeholder="Please enter user name" />)}
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="Url">
-                {getFieldDecorator('url', {
-                  rules: [{ required: true, message: 'Please enter url' }],
-                })(
-                  <Input
-                    style={{ width: '100%' }}
-                    addonBefore="http://"
-                    addonAfter=".com"
-                    placeholder="Please enter url"
-                  />,
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-        )
-      case 2:
         return <ConfirmationSection />
-      case 3:
-        return (
-          <>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item label="Approver">
-                  {getFieldDecorator('approver', {
-                    rules: [
-                      { required: true, message: 'Please choose the approver' },
-                    ],
-                  })(
-                    <Select placeholder="Please choose the approver">
-                      <Option value="jack">Jack Ma</Option>
-                      <Option value="tom">Tom Liu</Option>
-                    </Select>,
-                  )}
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item label="DateTime">
-                  {getFieldDecorator('dateTime', {
-                    rules: [
-                      { required: true, message: 'Please choose the dateTime' },
-                    ],
-                  })(
-                    <DatePicker.RangePicker
-                      style={{ width: '100%' }}
-                      getPopupContainer={trigger => trigger.parentNode}
-                    />,
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={24}>
-                <Form.Item label="Description">
-                  {getFieldDecorator('description', {
-                    rules: [
-                      {
-                        required: true,
-                        message: 'please enter url description',
-                      },
-                    ],
-                  })(
-                    <Input.TextArea
-                      rows={4}
-                      placeholder="please enter url description"
-                    />,
-                  )}
-                </Form.Item>
-              </Col>
-            </Row>
-          </>
-        )
     }
   }
 
   const handleResize = () => setWidth(window.innerWidth)
 
   useEffect(() => {
-    window.addEventListener('resize', handleResize)
+    window.addEventListener("resize", handleResize)
 
-    return () => window.removeEventListener('resize', handleResize)
+    return () => window.removeEventListener("resize", handleResize)
   })
   return (
     <div>
       <LocalButton onClick={showDrawer} secondary width="80%">
         Create an account
       </LocalButton>
-      <Drawer
-        title="Sign Up"
-        width={(width * 60) / 100}
-        onClose={onClose}
-        visible={visible}>
+      <Drawer title="Sign Up" width={(width * 60) / 100} onClose={onClose} visible={visible}>
         <Steps current={activeStep}>
           <Step title="Step 1" description="This is a description." />
-          <Step title="Step 2" description="This is a description." />
           <Step
             title="Step 3"
             description="Email verification"
-            icon={<Icon type={activeStep === 2 ? 'loading' : 'solution'} />}
+            icon={<Icon type={activeStep === 2 ? "loading" : "solution"} />}
           />
           <Step title="Done" description="This is a description." />
         </Steps>
@@ -189,22 +252,21 @@ const DrawerForm = ({ form: { getFieldDecorator } }) => {
         </Form>
         <div
           style={{
-            position: 'absolute',
+            position: "absolute",
             left: 0,
             bottom: 0,
-            width: '100%',
-            borderTop: '1px solid #e9e9e9',
-            padding: '10px 16px',
-            background: '#fff',
-            textAlign: 'right',
-          }}>
-          <Button
-            onClick={activeStep === 1 ? onClose : lastStep}
-            style={{ marginRight: 8 }}>
-            {activeStep === 1 ? 'Cancel' : 'Back'}
+            width: "100%",
+            borderTop: "1px solid #e9e9e9",
+            padding: "10px 16px",
+            background: "#fff",
+            textAlign: "right"
+          }}
+        >
+          <Button onClick={activeStep === 0 ? onClose : lastStep} style={{ marginRight: 8 }}>
+            {activeStep === 0 ? "Cancel" : "Back"}
           </Button>
           <Button onClick={nextStep} type="primary">
-            {activeStep !== 3 ? 'Next' : 'Submit'}
+            {activeStep !== 2 ? "Next" : "Done"}
           </Button>
         </div>
       </Drawer>
@@ -218,10 +280,10 @@ const LocalButton = styled.a`
   padding: 0.7rem 1rem;
   height: 2.7rem;
   display: block;
-  border: ${props => (props.secondary ? '1px solid #f4f4f4' : '1px')};
+  border: ${props => (props.secondary ? "1px solid #f4f4f4" : "1px")};
   border-radius: 2px;
   font-weight: 500;
-  background: ${props => (props.secondary ? 'none' : '#2962ff')};
+  background: ${props => (props.secondary ? "none" : "#2962ff")};
   color: #fff;
   text-decoration: none;
   cursor: pointer;
@@ -230,8 +292,8 @@ const LocalButton = styled.a`
   width: ${props => props.width}
 
   &:hover {
-    background: ${props => (props.secondary ? '' : '#0d47a1')};
-    border-color: ${props => (props.secondary ? '#2962ff' : '')};
-    color: ${props => (props.secondary ? '#2962ff' : '')};
+    background: ${props => (props.secondary ? "" : "#0d47a1")};
+    border-color: ${props => (props.secondary ? "#2962ff" : "")};
+    color: ${props => (props.secondary ? "#2962ff" : "")};
 
 `
