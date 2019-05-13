@@ -1,6 +1,7 @@
 import React from 'react'
 import { LoginForm, Links, Footer } from '../components'
 import styled from 'styled-components'
+import { Query } from 'react-apollo'
 
 // import Logo from '../../components/Logo'
 

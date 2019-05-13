@@ -7,9 +7,15 @@ import { split } from 'apollo-link'
 import { WebSocketLink } from 'apollo-link-ws'
 import { getMainDefinition } from 'apollo-utilities'
 import { typeDefs } from './localStateSchema'
+import { persistCache } from 'apollo-cache-persist'
 
 const createClient = () => {
   const cache = new InMemoryCache()
+
+  persistCache({
+    cache,
+    storage: window.localStorage,
+  })
 
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     if (graphQLErrors) {
@@ -27,7 +33,7 @@ const createClient = () => {
   const wsLink = ApolloLink.from([
     errorLink,
     new WebSocketLink({
-      uri: `ws://localhost:4000/graphql`,
+      uri: 'ws://ec2-35-172-119-120.compute-1.amazonaws.com:4000/graphql',
       options: {
         reconnect: true,
       },
@@ -37,7 +43,7 @@ const createClient = () => {
   const httpLink = ApolloLink.from([
     errorLink,
     new HttpLink({
-      uri: 'http://localhost:4000/graphql',
+      uri: 'http://ec2-35-172-119-120.compute-1.amazonaws.com:4000/graphql',
       headers: {
         authorization: localStorage.getItem('authToken'),
       },
@@ -61,9 +67,9 @@ const createClient = () => {
     typeDefs,
   })
 
-  client.writeData({
+  cache.writeData({
     data: {
-      isLoggedIn: false,
+      isLoggedIn: !!localStorage.getItem('authToken'),
     },
   })
   return client
