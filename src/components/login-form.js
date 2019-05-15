@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Input, Button, Tooltip, Icon, Form } from 'antd'
 import { Mutation, ApolloConsumer } from 'react-apollo'
+import { Spin } from 'antd'
 import gql from 'graphql-tag'
 
 const LOGIN = gql`
@@ -24,8 +25,8 @@ const LoginForm = props => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const [emailError, setEmailError] = useState('')
-  const [passwordError, setPasswordError] = useState('')
+  const [passwordError, setPasswordError] = useState(null)
+  const [emailError, setEmailError] = useState(null)
 
   const { getFieldDecorator } = props.form
 
@@ -46,20 +47,21 @@ const LoginForm = props => {
             } else {
               switch (login.error.field) {
                 case 'EMAIL':
-                  setPasswordError('')
+                  setPasswordError(null)
                   setEmailError(login.error.msg)
                   break
                 case 'PASSWORD':
-                  setEmailError('')
+                  setEmailError(null)
                   setPasswordError(login.error.msg)
               }
             }
           }}>
           {(login, { loading, data }) => {
-            data && console.log(data.login.error)
+            data && console.log(data.login)
             return (
               <Form className="login-form" style={{ width: '80%' }}>
                 <label
+                  name="email"
                   style={{
                     fontSize: '0.9rem',
                     lineHeight: '2rem',
@@ -70,38 +72,28 @@ const LoginForm = props => {
                 </label>
                 <Form.Item
                   help={emailError}
-                  validateStatus={emailError ? 'error' : ''}>
+                  validateStatus={emailError ? 'error' : undefined}
+                  hasFeedback>
                   {getFieldDecorator('email', {
                     rules: [
                       {
+                        type: 'email',
+                        message: 'The input is not valid E-mail!',
+                      },
+                      {
                         required: true,
-                        message: 'Please input your username!',
+                        message: 'Please input your E-mail!',
                       },
                     ],
                   })(
                     <Input
-                      size="large"
-                      placeholder="Please enter your email here."
-                      prefix={
-                        <Icon
-                          type="user"
-                          style={{ color: 'rgba(0,0,0,.25)' }}
-                        />
-                      }
-                      type="email"
+                      name="email"
                       onChange={e => setEmail(e.target.value)}
-                      suffix={
-                        <Tooltip title="Please enter a verified email">
-                          <Icon
-                            type="info-circle"
-                            style={{ color: 'rgba(0,0,0,.45)' }}
-                          />
-                        </Tooltip>
-                      }
                     />,
                   )}
                 </Form.Item>
                 <label
+                  name="password"
                   style={{
                     fontSize: '0.9rem',
                     lineHeight: '2rem',
@@ -110,39 +102,47 @@ const LoginForm = props => {
                   }}>
                   Password
                 </label>
+
+                {console.log(!!passwordError)}
                 <Form.Item
                   help={passwordError}
-                  validateStatus={passwordError ? 'error' : ''}>
+                  validateStatus={passwordError ? 'error' : undefined}
+                  hasFeedback>
                   {getFieldDecorator('password', {
                     rules: [
                       {
                         required: true,
-                        message: 'Please input your Password!',
+                        message: 'Please input your password!',
                       },
                     ],
                   })(
-                    <Input.Password
-                      prefix={
-                        <Icon
-                          type="lock"
-                          style={{ color: 'rgba(0,0,0,.25)' }}
-                        />
-                      }
-                      placeholder="Please enter your password here."
-                      size="large"
+                    <Input
                       type="password"
                       onChange={e => setPassword(e.target.value)}
                     />,
                   )}
                 </Form.Item>
-                <Button
-                  type="primary"
-                  size="large"
-                  style={{ width: '100%' }}
-                  loading={loading}
-                  onClick={() => login({ variables: { email, password } })}>
-                  Sign In
-                </Button>
+                {!loading ? (
+                  <Button
+                    type="primary"
+                    size="large"
+                    style={{ width: '100%' }}
+                    onClick={() =>
+                      login({
+                        variables: {
+                          email,
+                          password,
+                        },
+                      })
+                    }>
+                    Sign In
+                  </Button>
+                ) : (
+                  <Spin
+                    style={{ fontSize: 24, marginLeft: '45%' }}
+                    indicator={<Icon type="loading" spin />}
+                  />
+                )}
               </Form>
             )
           }}

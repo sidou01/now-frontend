@@ -5,4 +5,9 @@ export const typeDefs = gql`
     isLoggedIn: Boolean!
     authenticatedUser: User!
   }
+
+  enum Gender {
+    MALE
+    FEMALE
+  }
 `
