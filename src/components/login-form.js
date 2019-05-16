@@ -103,7 +103,6 @@ const LoginForm = props => {
                   Password
                 </label>
 
-                {console.log(!!passwordError)}
                 <Form.Item
                   help={passwordError}
                   validateStatus={passwordError ? 'error' : undefined}
