@@ -1,12 +1,10 @@
 import React from 'react'
-import { Layout, Menu, Icon } from 'antd'
+import { Layout } from 'antd'
 import {
   DashboardSidebar,
   DashboardNavbar,
   DashboardContent,
 } from '../components'
-
-const { Content } = Layout
 
 export default () => {
   return (
@@ -14,9 +12,7 @@ export default () => {
       <DashboardNavbar />
       <Layout style={{ minHeight: '100vh' }}>
         <DashboardSidebar />
-        <Layout style={{ padding: '0 24px 24px' }}>
-          <DashboardContent />
-        </Layout>
+        <DashboardContent />
       </Layout>
     </Layout>
   )
