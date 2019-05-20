@@ -1,6 +1,17 @@
 import React from 'react'
 import { Layout } from 'antd'
 import { Router } from '@reach/router'
+import {
+  TopServices,
+  Calendar,
+  Settings,
+  Services,
+  Profile,
+  SentMessages,
+  RecievedMessages,
+} from '../components'
+
+//lazy load one of the components
 
 const { Content } = Layout
 
@@ -17,21 +28,13 @@ export default () => {
         <Router>
           <TopServices path="/" />
           <Calendar path="calendar" />
-          <Profile path="profile" />
           <Settings path="settings" />
+          <Profile path="profile" />
           <Services path="services" />
-          <SentMessags path="recievedMessages" />
+          <SentMessages path="recievedMessages" />
           <RecievedMessages path="sentMessages" />
         </Router>
       </Content>
     </Layout>
   )
 }
-
-const Calendar = () => <h1>calendar</h1>
-const TopServices = () => <h1>Top Services</h1>
-const Services = () => <h1>Services</h1>
-const Settings = () => <h1>Settings</h1>
-const Profile = () => <h1>profile</h1>
-const SentMessags = () => <h1>sent messages</h1>
-const RecievedMessages = () => <h1>recieved messages</h1>

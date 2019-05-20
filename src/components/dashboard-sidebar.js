@@ -13,37 +13,32 @@ export default () => (
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       style={{ height: '100%', borderRight: 0 }}>
-      <Menu.Item key="sub1" title={<span />}>
+      <Menu.Item key="sub1">
         <Link to="/">
           <Icon type="user" />
           Top Services
         </Link>
       </Menu.Item>
 
-      <Menu.Item key="sub2" title={<span />}>
+      <Menu.Item key="sub2">
         <Link to="profile">
           <Icon type="user" />
           Profile
         </Link>
       </Menu.Item>
-      <SubMenu
-        key="sub3"
-        title={
-          <span>
-            <Icon type="file-search" />
-            Services
-          </span>
-        }>
-        <Menu.Item key="5">Medical</Menu.Item>
-        <Menu.Item key="6">Lawyer</Menu.Item>
-      </SubMenu>
-      <Menu.Item key="sub4" title={<span />}>
+      <Menu.Item key="sub3">
+        <Link to="services">
+          <Icon type="file-search" />
+          Services
+        </Link>
+      </Menu.Item>
+      <Menu.Item key="sub4">
         <Link to="calendar">
           <Icon type="calendar" />
           Calendar
         </Link>
       </Menu.Item>
-      <Menu.Item key="sub5" title={<span />}>
+      <Menu.Item key="sub5">
         <Link to="settings">
           <Icon type="setting" />
           Settings
