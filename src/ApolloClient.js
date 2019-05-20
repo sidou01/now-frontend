@@ -33,7 +33,7 @@ const createClient = () => {
   const wsLink = ApolloLink.from([
     errorLink,
     new WebSocketLink({
-      uri: 'ws://ec2-35-172-119-120.compute-1.amazonaws.com:4000/graphql',
+      uri: 'ws://ec2-34-227-32-199.compute-1.amazonaws.com:4000/graphql',
       options: {
         reconnect: true,
       },
@@ -43,7 +43,7 @@ const createClient = () => {
   const httpLink = ApolloLink.from([
     errorLink,
     new HttpLink({
-      uri: 'http://ec2-35-172-119-120.compute-1.amazonaws.com:4000/graphql',
+      uri: 'http://ec2-34-227-32-199.compute-1.amazonaws.com:4000/graphql',
       headers: {
         authorization: localStorage.getItem('authToken'),
       },

@@ -1,5 +1,8 @@
-export { default as LoginForm } from "./login-form"
-export { default as Links } from "./auth-links"
-export { default as Logo } from "./logo"
-export { default as RegisterDrawer } from "./register-drawer"
-export { default as Footer } from "./footer"
+export { default as LoginForm } from './login-form'
+export { default as Links } from './auth-links'
+export { default as Logo } from './logo'
+export { default as RegisterDrawer } from './register-drawer'
+export { default as Footer } from './footer'
+export { default as DashboardNavbar } from './dashboard-navbar'
+export { default as DashboardSidebar } from './dashboard-sidebar'
+export { default as DashboardContent } from './dashboard-content'
