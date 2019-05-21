@@ -7,7 +7,7 @@ export default () => {
   return (
     <Layout>
       <DashboardNavbar />
-      <Layout style={{ minHeight: '100vh' }}>
+      <Layout>
         <DashboardSidebar />
         <DashboardContent />
       </Layout>

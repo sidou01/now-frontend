@@ -6,17 +6,17 @@ const { SubMenu } = Menu
 const { Sider } = Layout
 
 export default () => (
-  <Sider width={200} style={{ background: '#fff' }}>
+  <Sider width={200} style={{ background: '#fff', minHeight: '100vh' }}>
     <Menu
       mode="inline"
-      theme="dark"
+      theme="light"
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
-      style={{ height: '100%', borderRight: 0 }}>
+      style={{ height: '100%', borderRight: 0, paddingTop: '1rem' }}>
       <Menu.Item key="sub1">
         <Link to="/">
           <Icon type="user" />
-          Top Services
+          Trending
         </Link>
       </Menu.Item>
 
