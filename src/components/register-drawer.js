@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Drawer, Button, Form, Icon, Spin, Alert } from 'antd'
 import styled from 'styled-components'
 import { Steps } from 'antd'
-import { useSubscription } from 'react-apollo-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import RegisterForm from './register-form'
 
@@ -30,7 +30,7 @@ const CONFIRMATION_ENABLED = gql`
   }
 `
 const ConfirmationSection = ({ toggleConfirmationStep, userId }) => {
-  const { data, error, loading } = useSubscription(CONFIRMATION_ENABLED, {
+  const { error, loading } = useSubscription(CONFIRMATION_ENABLED, {
     variables: { userId },
   })
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { Layout, Menu, Icon } from 'antd'
 import { Link } from '@reach/router'
 
-const { SubMenu } = Menu
+// const { SubMenu } = Menu
 const { Sider } = Layout
 
 export default () => (
@@ -45,6 +45,7 @@ export default () => (
         </Link>
       </Menu.Item>
 
+      {/*
       <SubMenu
         key="sub6"
         title={
@@ -60,6 +61,7 @@ export default () => (
           <Link to="recievedMessages">Recieved Messages</Link>
         </Menu.Item>
       </SubMenu>
+      */}
     </Menu>
   </Sider>
 )

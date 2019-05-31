@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Input, Button, Tooltip, Icon, Form } from 'antd'
+import { Input, Button, Icon, Form } from 'antd'
 import { Mutation, ApolloConsumer } from 'react-apollo'
 import { Spin } from 'antd'
 import gql from 'graphql-tag'
@@ -16,6 +16,8 @@ const LOGIN = gql`
       user {
         id
         fullName
+        email
+        avatar
       }
     }
   }
@@ -53,6 +55,9 @@ const LoginForm = props => {
                 case 'PASSWORD':
                   setEmailError(null)
                   setPasswordError(login.error.msg)
+                  break
+                default:
+                  console.log(login.error)
               }
             }
           }}>

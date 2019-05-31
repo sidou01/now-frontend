@@ -9,10 +9,10 @@ import { getMainDefinition } from 'apollo-utilities'
 import { typeDefs } from './localStateSchema'
 import { persistCache } from 'apollo-cache-persist'
 
-const createClient = () => {
+const createClient = async () => {
   const cache = new InMemoryCache()
 
-  persistCache({
+  await persistCache({
     cache,
     storage: window.localStorage,
   })
