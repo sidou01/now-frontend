@@ -5,7 +5,7 @@ import styled from 'styled-components'
 
 // import Logo from '../../components/Logo'
 
-export default () => (
+export default props => (
   <Wrapper>
     <LeftWrapper>
       <div id="signin">
@@ -18,10 +18,11 @@ export default () => (
       <Showcase>
         <div>
           <h1>
-            Manage your appointments all in <strong>one</strong> place
+            Manage your appointments all in{' '}
+            <strong style={{ color: 'white' }}>one</strong> place
           </h1>
           <ShowcaseButton secondary href="#">
-            Start a FREE 10-day trial
+            About Us
           </ShowcaseButton>
         </div>
       </Showcase>

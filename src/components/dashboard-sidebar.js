@@ -1,18 +1,33 @@
-import React from 'react'
-import { Layout, Menu, Icon } from 'antd'
-import { Link } from '@reach/router'
+import React from "react"
+import { Layout, Menu, Icon, Avatar, Card, Switch } from "antd"
+import { Link } from "@reach/router"
 
 // const { SubMenu } = Menu
 const { Sider } = Layout
+const { Meta } = Card
 
 export default () => (
-  <Sider width={200} style={{ background: '#fff', minHeight: '100vh' }}>
+  <Sider width={200} style={{ background: "#fff", minHeight: "100vh" }}>
+    <div style={{ padding: "15px" }}>
+      <Card
+        title={<strong>Sara Vieira</strong>}
+        bordered={false}
+        actions={[<Icon type="setting" />, <Icon type="edit" />, <Icon type="ellipsis" />]}
+      >
+        <Meta
+          avatar={
+            <Avatar size={100} src="https://avatars1.githubusercontent.com/u/1411284?s=460&v=4" />
+          }
+        />
+      </Card>
+    </div>
     <Menu
       mode="inline"
       theme="light"
-      defaultSelectedKeys={['1']}
-      defaultOpenKeys={['sub1']}
-      style={{ height: '100%', borderRight: 0, paddingTop: '1rem' }}>
+      defaultSelectedKeys={["1"]}
+      defaultOpenKeys={["sub1"]}
+      style={{ height: "100%", borderRight: 0, paddingTop: "1rem" }}
+    >
       <Menu.Item key="sub1">
         <Link to="/">
           <Icon type="user" />
@@ -20,12 +35,6 @@ export default () => (
         </Link>
       </Menu.Item>
 
-      <Menu.Item key="sub2">
-        <Link to="profile">
-          <Icon type="user" />
-          Profile
-        </Link>
-      </Menu.Item>
       <Menu.Item key="sub3">
         <Link to="services">
           <Icon type="file-search" />

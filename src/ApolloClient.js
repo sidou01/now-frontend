@@ -9,8 +9,14 @@ import { getMainDefinition } from 'apollo-utilities'
 import { typeDefs } from './localStateSchema'
 import { persistCache } from 'apollo-cache-persist'
 
+import { IntrospectionFragmentMatcher } from 'apollo-cache-inmemory'
+import introspectionQueryResultData from './fragmentTypes.json'
+
 const createClient = async () => {
-  const cache = new InMemoryCache()
+  const fragmentMatcher = new IntrospectionFragmentMatcher({
+    introspectionQueryResultData,
+  })
+  const cache = new InMemoryCache({ fragmentMatcher })
 
   await persistCache({
     cache,
@@ -33,7 +39,7 @@ const createClient = async () => {
   const wsLink = ApolloLink.from([
     errorLink,
     new WebSocketLink({
-      uri: 'ws://ec2-34-227-32-199.compute-1.amazonaws.com:4000/graphql',
+      uri: 'ws://ec2-3-93-13-29.compute-1.amazonaws.com:4000/graphql',
       options: {
         reconnect: true,
       },
@@ -43,7 +49,7 @@ const createClient = async () => {
   const httpLink = ApolloLink.from([
     errorLink,
     new HttpLink({
-      uri: 'http://ec2-34-227-32-199.compute-1.amazonaws.com:4000/graphql',
+      uri: 'http://ec2-3-93-13-29.compute-1.amazonaws.com:4000/graphql',
       headers: {
         authorization: localStorage.getItem('authToken'),
       },
@@ -65,6 +71,7 @@ const createClient = async () => {
       httpLink,
     ),
     typeDefs,
+    resolvers: {},
   })
 
   cache.writeData({

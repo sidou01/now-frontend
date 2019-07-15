@@ -3,10 +3,10 @@ import { Layout } from 'antd'
 import { DashboardSidebar, DashboardNavbar } from '../components'
 import DashboardContent from './dashboard-content'
 
-export default ({ authUser }) => {
+export default props => {
   return (
     <Layout>
-      <DashboardNavbar authUser={authUser} />
+      <DashboardNavbar />
       <Layout>
         <DashboardSidebar />
         <DashboardContent />
