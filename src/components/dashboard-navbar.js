@@ -1,7 +1,7 @@
-import React, { useState } from "react"
-import { Avatar, Badge, Menu, Icon, Dropdown } from "antd"
-import { Link } from "@reach/router"
-import { useApolloClient } from "@apollo/react-hooks"
+import React, { useState } from 'react'
+import { Avatar, Badge, Menu, Icon, Dropdown } from 'antd'
+import { Link } from '@reach/router'
+import { useApolloClient } from '@apollo/react-hooks'
 
 const { SubMenu } = Menu
 // const { Content, Sider } = Layout
@@ -10,12 +10,11 @@ export default props => {
   const client = useApolloClient()
   const [count, setCount] = useState(2)
   const logout = () => {
-    localStorage.removeItem("authToken")
+    localStorage.removeItem('authToken')
     client.writeData({
       data: {
         isLoggedIn: false,
-        authenticatedUser: null
-      }
+      },
     })
   }
 
@@ -25,21 +24,21 @@ export default props => {
   }
   const menu = (
     <Menu>
-      <Menu.Item key="1" style={{ padding: "5px" }}>
+      <Menu.Item key="1" style={{ padding: '5px' }}>
         <Avatar
           shape="square"
           src="https://www.genolier.net/site/assets/files/17734/aapro-1.500x0.jpg"
           size="medium"
-          style={{ marginRight: "10px" }}
+          style={{ marginRight: '10px' }}
         />
         Your Appointment got Approved by Dr Matti !
       </Menu.Item>
-      <Menu.Item key="2" style={{ padding: "5px" }}>
+      <Menu.Item key="2" style={{ padding: '5px' }}>
         <Avatar
           shape="square"
           src="https://www.sheffield.ac.uk/polopoly_fs/1.739455!/image/A_Cochrane_300x300.jpg"
           size="medium"
-          style={{ marginRight: "10px" }}
+          style={{ marginRight: '10px' }}
         />
         Dr Smith changed appointment duration from 30 minutes to 1h.
       </Menu.Item>
@@ -48,7 +47,7 @@ export default props => {
   return (
     <Menu mode="horizontal" theme="light">
       <SubMenu
-        style={{ float: "right" }}
+        style={{ float: 'right' }}
         title={
           <span className="submenu-title-wrapper">
             <span style={{ marginLeft: 24 }}>
@@ -59,8 +58,7 @@ export default props => {
               />
             </span>
           </span>
-        }
-      >
+        }>
         <Menu.Item key="setting:1">
           <Link to="/profile">
             <Icon type="profile" />
@@ -72,13 +70,15 @@ export default props => {
           Logout
         </Menu.Item>
       </SubMenu>
-      <Menu.Item key="notificaions" style={{ float: "right" }} onClick={handleNotification}>
+      <Menu.Item
+        key="notificaions"
+        style={{ float: 'right' }}
+        onClick={handleNotification}>
         <Dropdown
           overlay={menu}
-          overlayStyle={{ width: "450px" }}
+          overlayStyle={{ width: '450px' }}
           placement="bottomLeft"
-          trigger={["click"]}
-        >
+          trigger={['click']}>
           <Badge count={count}>
             <Icon type="bell" size="large" />
           </Badge>

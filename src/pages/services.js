@@ -1,6 +1,15 @@
-import React from "react"
-import { Menu, Pagination, Input, Card, Row, Col, AutoComplete, Badge } from "antd"
-import styled from "styled-components"
+import React from 'react'
+import {
+  Menu,
+  Pagination,
+  Input,
+  Card,
+  Row,
+  Col,
+  AutoComplete,
+  Badge,
+} from 'antd'
+import styled from 'styled-components'
 // import { Input } from "antd"
 
 const { Search } = Input
@@ -12,13 +21,13 @@ const { SubMenu } = Menu
 
 export default class extends React.Component {
   state = {
-    current: "mail"
+    current: 'mail',
   }
 
   handleClick = e => {
-    console.log("click ", e)
+    console.log('click ', e)
     this.setState({
-      current: e.key
+      current: e.key,
     })
   }
 
@@ -29,20 +38,19 @@ export default class extends React.Component {
           onClick={this.handleClick}
           selectedKeys={[this.state.current]}
           mode="horizontal"
-          style={{ padding: "10px" }}
-        >
-          <Menu.Item key="app" disabled>
+          style={{ padding: '10px' }}>
+          <Menu.Item key="pagination" disabled>
             <Pagination defaultCurrent={1} total={50} />
           </Menu.Item>
-          <Menu.Item key="app" disabled>
+          <Menu.Item key="search" disabled>
             <Search
-              style={{ justifyContent: "center" }}
+              style={{ justifyContent: 'center' }}
               placeholder="Search for a Service"
               onSearch={value => console.log(value)}
-              style={{ width: 200, marginLeft: "50px" }}
+              style={{ width: 200, marginLeft: '50px' }}
             />
           </Menu.Item>
-          <Menu.Item key="alipay" style={{ float: "right" }}>
+          <Menu.Item key="alipay" style={{ float: 'right' }}>
             Location: <strong>Oran</strong>
           </Menu.Item>
         </Menu>
@@ -74,8 +82,7 @@ export default class extends React.Component {
             <Col
               xs={{ span: 5, offset: 1 }}
               lg={{ span: 6, offset: 0.5 }}
-              style={{ marginTop: "5px" }}
-            >
+              style={{ marginTop: '5px' }}>
               <Card
                 title="Dr méd. Matti Aapro"
                 extra={<Badge color="blue" text="Doctor" />}
@@ -86,8 +93,7 @@ export default class extends React.Component {
                     alt="example"
                     src="https://www.genolier.net/site/assets/files/17734/aapro-1.500x0.jpg"
                   />
-                }
-              >
+                }>
                 <p>
                   <strong>Spcialty</strong>: Oncologie (cancérologie)
                 </p>

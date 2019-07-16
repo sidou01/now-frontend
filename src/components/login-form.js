@@ -7,16 +7,14 @@ import gql from 'graphql-tag'
 const LOGIN = gql`
   mutation LOGIN($email: String!, $password: String!) {
     login(input: { email: $email, password: $password }) {
-      __typename
-      ... on SuccessPayload {
-        token
-        user {
-          id
-          fullName
-        }
+      success
+      token
+      user {
+        id
+        fullName
       }
 
-      ... on ErrorPayload {
+      error {
         field
         msg
       }
@@ -39,27 +37,26 @@ const LoginForm = props => {
         <Mutation
           mutation={LOGIN}
           onCompleted={({ login }) => {
-            if (login.__typename === 'SuccessPayload') {
+            if (login.success) {
               localStorage.setItem('authToken', login.token)
               client.writeData({
                 data: {
                   isLoggedIn: true,
-                  authenticatedUser: login.user,
                 },
               })
             } else {
               console.log('else are we here')
-              switch (login.field) {
+              switch (login.error.field) {
                 case 'EMAIL':
                   setPasswordError(null)
-                  setEmailError(login.msg)
+                  setEmailError(login.error.msg)
                   break
                 case 'PASSWORD':
                   setEmailError(null)
-                  setPasswordError(login.msg)
+                  setPasswordError(login.error.msg)
                   break
                 default:
-                  console.log(login.msg)
+                  console.log(login.error.msg)
               }
             }
           }}>
