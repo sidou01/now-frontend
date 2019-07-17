@@ -1,10 +1,13 @@
-import React from 'react'
-import { Tabs, Icon, Descriptions, Table, Tag, Button } from 'antd'
+import React, { useState } from 'react'
+import { Tabs, Icon, Descriptions, Table, Tag, Button, Modal } from 'antd'
+import dayjs from 'dayjs'
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
 const { TabPane } = Tabs
 const { Column } = Table
 
-export default () => (
+export default ({ service }) => (
   <Tabs defaultActiveKey="1">
     <TabPane
       tab={
@@ -14,7 +17,7 @@ export default () => (
         </span>
       }
       key="1">
-      <ServiceSchedule />
+      <ServiceSchedule serviceId={service.id} />
     </TabPane>
     <TabPane
       tab={
@@ -25,98 +28,210 @@ export default () => (
       }
       key="2">
       <Descriptions title="User Info">
-        <Descriptions.Item label="Address">
-          No. 18, Hangzhou, Zhejiang, China
+        <Descriptions.Item label="Address">{service.address}</Descriptions.Item>
+        <Descriptions.Item label="Phone Number">
+          {service.phone}
         </Descriptions.Item>
-        <Descriptions.Item label="Office Hours">9am - 16pm</Descriptions.Item>
-        <Descriptions.Item label="Field">Dentist</Descriptions.Item>
+        <Descriptions.Item label="Field">
+          {service.doctorField}
+        </Descriptions.Item>
 
-        <Descriptions.Item label="Gender">MALE</Descriptions.Item>
-        <Descriptions.Item label="Age">29</Descriptions.Item>
-        <Descriptions.Item label="Education">UCLA</Descriptions.Item>
+        <Descriptions.Item label="Gender">{service.gender}</Descriptions.Item>
+        <Descriptions.Item label="Age">{service.age}</Descriptions.Item>
+        <Descriptions.Item label="Education">
+          {service.education}
+        </Descriptions.Item>
       </Descriptions>
       ,
     </TabPane>
   </Tabs>
 )
 
-const ServiceSchedule = () => (
-  <Table dataSource={data}>
-    <Column title="Doctor" dataIndex="doctor" key="doctor" />
-    <Column title="From" dataIndex="from" key="from" />
-    <Column title="To" dataIndex="to" key="to" />
-    <Column
-      title="Availability"
-      dataIndex="open"
-      key="Available"
-      render={open => (
-        <span>
-          <Tag color={open ? 'green' : 'red'} key={open}>
-            {open ? 'Available' : 'Taken'}
-          </Tag>
-        </span>
-      )}
-    />
-    <Column
-      title="Schedule"
-      dataIndex="open"
-      key="action"
-      render={open => (
-        <span>
-          {open ? (
-            <Button type="primary">Schedule</Button>
-          ) : (
-            <Button type="primary" disabled>
-              Schedule
-            </Button>
-          )}
-        </span>
-      )}
-    />
-  </Table>
-)
+const GET_TODAY_SERVICE_APPOINTMENTS = gql`
+  query GET_TODAY_SERVICE_APPOINTMENTS($serviceId: ID!) {
+    fetchServiceTodaysAppointments(serviceId: $serviceId) {
+      id
+      title
+      start
+      end
+      duration
+    }
+  }
+`
+const SCHEDULE_APPOINTMENT = gql`
+  mutation SCHEDULE_APPOINTMENT(
+    $serviceId: ID!
+    $title: String
+    $start: Date!
+    $duration: AppointmentDuration
+  ) {
+    scheduleAppointment(
+      input: {
+        serviceId: $ID
+        title: $title
+        start: $start
+        duration: $duration
+      }
+    ) {
+      id
+      end
+    }
+  }
+`
+const ServiceSchedule = ({ serviceId }) => {
+  const [visible, toggleVisible] = useState(false)
+  const [confirmLoading, toggleConfirmLoading] = useState(false)
+  const { loading, data } = useQuery(GET_TODAY_SERVICE_APPOINTMENTS, {
+    variables: {
+      serviceId,
+    },
+    fetchPolicy: 'cache-and-network',
+  })
 
-const data = [
+  const handleOk = () => {
+    // setTimeout(() => {
+    //   this.setState({
+    //     visible: false,
+    //     confirmLoading: false,
+    //   })
+    // }, 2000)
+  }
+
+  const handleCancel = () => toggleVisible(false)
+  const showModal = () => toggleVisible(true)
+
+  if (loading) {
+    return <h2>loading...</h2>
+  }
+  console.log(data.fetchServiceTodaysAppointments)
+  const fetchedData = generateTable(daily, data.fetchServiceTodaysAppointments)
+  return (
+    <>
+      <Table dataSource={fetchedData}>
+        <Column title="From" dataIndex="start" key={1} />
+        <Column title="To" dataIndex="end" key={2} />
+        <Column
+          title="Availability"
+          dataIndex="open"
+          key={3}
+          render={open => (
+            <span>
+              <Tag color={open ? 'green' : 'red'} key={open}>
+                {open ? 'Available' : 'Taken'}
+              </Tag>
+            </span>
+          )}
+        />
+        <Column
+          title="Schedule"
+          dataIndex="open"
+          key={4}
+          render={(open, record) => (
+            <span>
+              {open ? (
+                <Button type="primary" onClick={e => showModal()}>
+                  Schedule
+                </Button>
+              ) : (
+                <Button type="primary" disabled>
+                  Schedule
+                </Button>
+              )}
+            </span>
+          )}
+        />
+      </Table>
+      <Modal
+        title="Title"
+        visible={visible}
+        onOk={handleOk}
+        confirmLoading={confirmLoading}
+        onCancel={handleCancel}
+      />
+    </>
+  )
+}
+
+const daily = [
   {
-    key: '1',
-    doctor: 'Dan',
-    from: '8:00am',
-    to: '9:00am',
-    open: false,
-  },
-  {
-    key: '2',
-    doctor: 'Dan',
-    from: '9:00am',
-    to: '10:00am',
+    start: 8,
+    end: 9,
     open: true,
   },
   {
-    key: '3',
-    doctor: 'Dan',
-    from: '11:00am',
-    to: '12:00pm',
+    start: 9,
+    end: 10,
     open: true,
   },
   {
-    key: '4',
-    doctor: 'Dan',
-    from: '13:00pm',
-    to: '14:00pm',
+    start: 10,
+    end: 11,
+    open: true,
+  },
+  {
+    start: 11,
+    end: 12,
+    open: true,
+  },
+  {
+    start: 12,
+    end: 13,
+    open: true,
+  },
+  {
+    start: 13,
+    end: 14,
     open: false,
   },
   {
-    key: '5',
-    doctor: 'Dan',
-    from: '14:00pm',
-    to: '15:00pm',
+    start: 14,
+    end: 15,
     open: false,
   },
   {
-    key: '6',
-    doctor: 'Dan',
-    from: '15:00pm',
-    to: '16:00pm',
+    start: 15,
+    end: 16,
+    open: true,
+  },
+  {
+    start: 16,
+    end: 17,
     open: true,
   },
 ]
+
+function generateTable(dailyTimeline, data) {
+  const result = []
+  let found = false
+  for (let i = 0; i < dailyTimeline.length; i++) {
+    found = false
+    let start = dayjs()
+      .set('hour', dailyTimeline[i].start)
+      .set('minute', 0)
+      .set('second', 0)
+      .set('ms', 0)
+
+    for (let j = 0; j < data.length; j++) {
+      let fetchedStart = dayjs(data[j].start)
+        .set('minute', 0)
+        .set('second', 0)
+        .set('ms', 0)
+      if (start.isSame(fetchedStart)) {
+        found = true
+      }
+      // console.log(i)
+      // console.log(`fetchedStart: ${fetchedStart.hour()}`)
+      // console.log(`start: ${start}`)
+      // console.log(found)
+    }
+    // console.log(`index ${i}: found is: ${found}`)
+    result.push({
+      key: i,
+      start: start.format('HH:mm'),
+      end: start.add(1, 'hour').format('HH:mm'),
+      open: !found,
+    })
+  }
+
+  return result
+}

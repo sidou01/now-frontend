@@ -8,7 +8,7 @@ const { Title } = Typography
 
 const FETCH_SERVICES = gql`
   query FETCH_SERVICES {
-    fetchServicesByType(type: Doctor, skip: 1) {
+    fetchServicesByType(type: Doctor) {
       id
       fullName
       email

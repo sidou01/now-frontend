@@ -52,7 +52,7 @@ export default props => {
           <span className="submenu-title-wrapper">
             <span style={{ marginLeft: 24 }}>
               <Avatar
-                src="https://avatars1.githubusercontent.com/u/1411284?s=460&v=4"
+                src="https://avatars3.githubusercontent.com/u/100200?s=460&v=4"
                 icon="user"
                 size="medium"
               />

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, Icon, Tag, Rate, Button, Divider, Statistic, Badge } from 'antd'
 
-export default () => {
+export default ({ service }) => {
   return (
     <Card
       title={ServiceTitle}
@@ -10,18 +10,20 @@ export default () => {
       <h4 style={{ fontWeight: 700 }}>OVERALL RATING</h4>
 
       <div>
-        <p style={{ fontWeight: 700, float: 'left', fontSize: 24 }}>3.5</p>
+        <p style={{ fontWeight: 700, float: 'left', fontSize: 24 }}>
+          {service.rating}
+        </p>
         <Rate
           style={{ float: 'left', marginLeft: '1.5rem', color: '#0094FF' }}
           allowHalf
-          defaultValue={3.5}
+          defaultValue={service.rating}
           disabled
         />
       </div>
       <Divider type="vertical" style={{ height: '75px', marginTop: '-35px' }} />
       <Statistic
-        title="Active Appointments"
-        value={112893}
+        title="Appointments Made"
+        value={service.made_appointments}
         style={{
           float: 'right',
           marginRight: '20rem',
@@ -33,7 +35,7 @@ export default () => {
 
       <Statistic
         title="Feedback"
-        value={1128}
+        value={service.likes}
         prefix={<Icon type="like" />}
         style={{
           float: 'right',
