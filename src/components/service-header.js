@@ -1,6 +1,5 @@
 import React from 'react'
-import { Card, Icon, Tag, Rate, Button, Divider } from 'antd'
-import styled from 'styled-components'
+import { Card, Icon, Tag, Rate, Button, Divider, Statistic, Badge } from 'antd'
 
 export default () => {
   return (
@@ -8,7 +7,7 @@ export default () => {
       title={ServiceTitle}
       style={{ width: '100%', marginTop: '-20px' }}
       bordered={false}>
-      <h4 style={{ fontWeight: 700 }}>RATING</h4>
+      <h4 style={{ fontWeight: 700 }}>OVERALL RATING</h4>
 
       <div>
         <p style={{ fontWeight: 700, float: 'left', fontSize: 24 }}>3.5</p>
@@ -19,15 +18,42 @@ export default () => {
           disabled
         />
       </div>
-      <Divider type="vertical" style={{ height: '65px', marginTop: '-25px' }} />
-      <p style={{ float: 'right' }}>
-        <strong>Email</strong>: dan.abramov@gmail.com
-      </p>
+      <Divider type="vertical" style={{ height: '75px', marginTop: '-35px' }} />
+      <Statistic
+        title="Active Appointments"
+        value={112893}
+        style={{
+          float: 'right',
+          marginRight: '20rem',
+          marginTop: '-4.2rem',
+          fontSize: 24,
+          fontWeight: '700',
+        }}
+      />
 
-      <div style={{ marginTop: '3.5rem', float: 'right' }}>
+      <Statistic
+        title="Feedback"
+        value={1128}
+        prefix={<Icon type="like" />}
+        style={{
+          float: 'right',
+          marginRight: '13rem',
+          marginTop: '-4.2rem',
+          fontSize: 24,
+          fontWeight: 700,
+        }}
+      />
+      <Button
+        type="default"
+        icon="info-circle"
+        style={{ float: 'right', marginTop: '-3rem' }}>
+        Check Available Date
+      </Button>
+
+      <div style={{ marginTop: '2rem', float: 'left', marginRight: '12rem' }}>
         <Button
           type="primary"
-          icon="tag"
+          icon="plus"
           style={{ float: 'left', clear: 'both' }}>
           Make Appointment
         </Button>
@@ -45,25 +71,27 @@ export default () => {
 const ServiceTitle = (
   <div style={{ display: 'block' }}>
     <h2 style={{ float: 'left' }}>Dan Abramov</h2>
-    <div>
-      <Icon
-        type="environment"
-        theme="filled"
-        style={{ float: 'left', marginLeft: '1rem', marginTop: '0.5rem' }}
-      />
-      <h4
-        style={{
-          float: 'left',
-          marginLeft: '0.5rem',
-          marginTop: '0.5rem',
-          fontWeight: 50,
-        }}>
-        Oran Bir el Djir
-      </h4>
-    </div>
-
+    <Badge style={{ marginLeft: '0.5rem' }} color="#87d068" text="Online" />
     <Tag color="blue" style={{ float: 'right', marginTop: '0.5rem' }}>
       Dentist
     </Tag>
+    <div>
+      <a
+        href="mailto:sidou010@outlook.com"
+        style={{
+          float: 'right',
+          marginLeft: '0.5rem',
+          marginRight: '1rem',
+          marginTop: '-1rem',
+          fontWeight: 50,
+        }}>
+        dan.Abramov@gmail.com
+      </a>
+      <Icon
+        type="mail"
+        theme="outlined"
+        style={{ float: 'right', marginLeft: '1rem', marginTop: '-0.8rem' }}
+      />
+    </div>
   </div>
 )
